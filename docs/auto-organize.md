@@ -170,7 +170,7 @@ tv:
     - resource_pix: "!2160p"
 ```
 
-一个通用的新版策略如下：排除 DV；优先 WiKi 小组；优先 2160P
+一个通用的新版策略如下：排除 DV；优先 WiKi 小组；优先 2160P，优先取最大的一个
 
 ```yaml
 # 第一级为别名，随便写
@@ -216,9 +216,9 @@ tv:
 
 电影兜底策略:
   media_type: movie
-  mode: coexist
+  mode: max_size
 
 剧集兜底策略:
   media_type: tv
-  mode: skip
+  mode: max_size
 ```
