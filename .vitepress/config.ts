@@ -19,7 +19,7 @@ export default defineConfigWithTheme<ThemeConfig>({
   cleanUrls: true,
   ignoreDeadLinks: true,
   base: '/',
-  
+
   themeConfig: {
     posts,
     page: {
@@ -70,6 +70,7 @@ export default defineConfigWithTheme<ThemeConfig>({
           { text: 'CMSHelp', link: 'https://github.com/guyue2005/CMSHelp/wiki' },
         ]
       },
+      { text: 'OPEN API', link: '/api' },
       { text: '捐赠', link: '/donate' },
       { text: 'FAQ', link: '/faq' },
 
