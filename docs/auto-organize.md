@@ -153,6 +153,7 @@ tv:
 你可以设置任意多个洗版策略
 
 - `mode` 是洗版模式，代表你想用哪种策略进行洗版
+- `scope` ：all/group 有效范围，当你需要多版本洗版时，需要指定为 group
 - `media_type` 设置这个策略用于哪个媒体类型，去掉这个字段即匹配所有
 - `category` 设置这个策略用于哪个`分类`（对应于二级分类策略里的分类名），去掉这个字段即匹配所有
 - `priority_level` 匹配优先级（就是符合这些规则的视频就会执行这个洗版策略）
@@ -223,4 +224,160 @@ tv:
 剧集兜底策略:
   media_type: tv
   mode: max_size
+```
+
+## 洗版策略示例
+
+### 每个视频只需要保留一个最好的版本
+
+```yaml
+# 第一级为别名，随便写
+电影洗版策略:
+  # 洗版模式：
+  #   coexist: 共存（就是多版本共存）
+  #   skip: 跳过（就是只要有一个，就不再保存了）
+  #   replace:（就是根据优先级进行洗版）
+  #   max_size:（就是在优先级相同时保留最大的）
+  #   min_size:（就是在优先级相同时保留最小的）
+  mode: replace
+  scope: all
+  # 匹配媒体类型，movie/tv，去掉这个字段即匹配所有
+  media_type: movie
+  # 匹配二级分类策略的分类名，去掉这个字段即匹配所有
+  #category: 华语电影,动画电影
+  # 匹配规则优先级，上面的优先级最高
+  priority_level:
+    - resource_team: "WiKi"
+      resource_effect: "!DV"
+    - resource_pix: "2160p,4k"
+      resource_type: "BluRay"
+      resource_effect: "!DV"
+    - resource_pix: "1080p"
+      resource_type: "BluRay"
+    - resource_pix: "2160p,4k"
+      resource_type: "WEB-DL"
+      resource_effect: "!DV"
+    - resource_pix: "1080p"
+
+剧集洗版策略:
+  mode: replace
+  scope: all
+  media_type: tv
+  priority_level:
+    - resource_pix: "2160p,4k"
+      resource_type: "BluRay"
+      resource_effect: "!DV"
+    - resource_pix: "1080p"
+      resource_type: "BluRay"
+    - resource_pix: "2160p,4k"
+      resource_type: "WEB-DL"
+      resource_effect: "!DV"
+    - resource_pix: "1080p"
+
+电影兜底策略:
+  media_type: movie
+  mode: max_size
+
+剧集兜底策略:
+  media_type: tv
+  mode: max_size
+```
+
+
+### 1080P和2160P各保留一个最好的版本
+
+多版本洗版时必须指定 **scope: group**
+
+```yaml
+# 第一级为别名，随便写
+电影洗版策略1080P:
+  # 洗版模式：
+  #   coexist: 共存（就是多版本共存）
+  #   skip: 跳过（就是只要有一个，就不再保存了）
+  #   replace:（就是根据优先级进行洗版）
+  #   max_size:（就是在优先级相同时保留最大的）
+  #   min_size:（就是在优先级相同时保留最小的）
+  mode: replace
+  scope: group
+  # 匹配媒体类型，movie/tv，去掉这个字段即匹配所有
+  media_type: movie
+  # 匹配二级分类策略的分类名，去掉这个字段即匹配所有
+  #category: 华语电影,动画电影
+  # 匹配规则优先级，上面的优先级最高
+  priority_level:
+    - resource_pix: "1080p"
+      resource_type: "BluRay"
+      resource_team: "WiKi"
+    - resource_pix: "1080p"
+      resource_type: "BluRay"
+    - resource_pix: "1080p"
+
+电影洗版策略2160P:
+  mode: replace
+  scope: group
+  media_type: movie
+  priority_level:
+    - resource_pix: "2160p,4k"
+      resource_effect: "!DV"
+      resource_type: "BluRay"
+      resource_team: "WiKi"
+    - resource_pix: "2160p,4k"
+      resource_effect: "!DV"
+      resource_type: "BluRay"
+    - resource_pix: "2160p,4k"
+      resource_effect: "!DV"
+
+剧集洗版策略1080P:
+  mode: replace
+  scope: group
+  media_type: tv
+  priority_level:
+    - resource_pix: "1080p"
+      resource_type: "BluRay"
+    - resource_pix: "1080p"
+
+剧集洗版策略2160P:
+  mode: replace
+  scope: group
+  media_type: tv
+  priority_level:
+    - resource_pix: "2160p,4k"
+      resource_type: "BluRay"
+      resource_effect: "!DV"
+    - resource_pix: "2160p,4k"
+      resource_effect: "!DV"
+
+电影兜底策略:
+  media_type: movie
+  mode: max_size
+  scope: group
+
+剧集兜底策略:
+  media_type: tv
+  mode: max_size
+  scope: group
+```
+
+### 每个视频只要有一个就行
+
+```yaml
+电影兜底策略:
+  media_type: movie
+  mode: skip
+
+剧集兜底策略:
+  media_type: tv
+  mode: skip
+```
+
+### 所有的版本都要
+
+```yaml
+电影兜底策略:
+  media_type: movie
+  mode: coexist
+
+剧集兜底策略:
+  media_type: tv
+  mode: coexist
 ```
